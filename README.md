@@ -1,0 +1,10 @@
+# CPDM: Boosting CT to PET Translation with Domain-Knowledge-Guided Diffusion Model
+
+
+This repository is the website of 'CPDM: Boosting CT to PET Translation with Domain-Knowledge-Guided Diffusion Model' by Dac Thai Nguyen, Trung Thanh Nguyen, Huu Tien Nguyen, Thanh Trung Nguyen, Huy Hieu Pham and Phi Le Nguyen.
+```
+...
+```
+
+# Website License
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
