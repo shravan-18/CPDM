@@ -1,4 +1,10 @@
 # CPDM: Boosting CT to PET Translation with Domain-Knowledge-Guided Diffusion Model
+
+
+Authors: Dac Thai Nguyen, Trung Thanh Nguyen, Huu Tien Nguyen, Thanh Trung Nguyen, Huy Hieu Pham, Phi Le Nguyen.
+
+CPDM utilizes a Brownian Bridge process-based diffusion model to directly learn the translation process from the CT domain to the PET domain, thereby reducing the stochasticity typically encountered in generative models.
+
 ***
 ![img](resources/CPDM_architecture.png)
 
@@ -45,3 +51,12 @@ sh shell/your_shell.sh
 
 ## Acknowledgement
 Our code is implemented based on Brownian Bridge Diffusion Model (https://github.com/xuekt98/BBDM)  
+
+### Citation
+If you find this code useful for your research, please cite the following paper:
+
+@inproceedings{nguyent2024CPDM,
+  title={CPDM: Boosting CT to PET Translation with Domain-Knowledge-Guided Diffusion Model},
+  author={Dac Thai Nguyen, Trung Thanh Nguyen, Huu Tien Nguyen, Thanh Trung Nguyen, Huy Hieu Pham, Phi Le Nguyen},
+  year={2024}
+}
