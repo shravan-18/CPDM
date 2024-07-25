@@ -54,8 +54,10 @@ Our code is implemented based on Brownian Bridge Diffusion Model (https://github
 ### Citation
 If you find this code useful for your research, please cite the following paper:
 
+```
 @inproceedings{nguyent2024CPDM,
   title={CPDM: Boosting CT to PET Translation with Domain-Knowledge-Guided Diffusion Model},
   author={Dac Thai Nguyen, Trung Thanh Nguyen, Huu Tien Nguyen, Thanh Trung Nguyen, Huy Hieu Pham, Phi Le Nguyen},
   year={2024}
 }
+```
