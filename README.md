@@ -1,4 +1,7 @@
 # CPDM: Boosting CT to PET Translation with Domain-Knowledge-Guided Diffusion Model
+```
+THIS IS AN OFFICIAL IMPLEMENTATION 🔥
+```
 
 **Authors:** Dac Thai Nguyen, Trung Thanh Nguyen, Huu Tien Nguyen, Thanh Trung Nguyen, Huy Hieu Pham, Phi Le Nguyen.
 
