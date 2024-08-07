@@ -54,7 +54,7 @@ sh shell/your_shell.sh
 ## Acknowledgement
 Our code is implemented based on Brownian Bridge Diffusion Model (https://github.com/xuekt98/BBDM)  
 
-### Citation
+## Citation
 If you find this code useful for your research, please cite the following paper:
 
 ```
@@ -64,3 +64,5 @@ If you find this code useful for your research, please cite the following paper:
   year={2024}
 }
 ```
+## Contact
+Trung Thanh NGUYEN - nguyent[at]cs.is.i.nagoya-u.ac.jp or thanh.nguyen.rc[at]a.riken.jp
