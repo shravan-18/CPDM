@@ -1,4 +1,4 @@
-# CPDM: Boosting CT to PET Translation with Domain-Knowledge-Guided Diffusion Model
+# CT to PET Translation: A Large-scale Dataset and Domain-Knowledge-Guided Diffusion Approach
 ***
 CPDM utilizes a Brownian Bridge process-based diffusion model to directly learn the translation process from the CT domain to the PET domain, thereby reducing the stochasticity typically encountered in generative models.
 
