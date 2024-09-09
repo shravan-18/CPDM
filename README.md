@@ -1,6 +1,11 @@
 # CT to PET Translation: A Large-scale Dataset and Domain-Knowledge-Guided Diffusion Approach
-***
-CPDM utilizes a Brownian Bridge process-based diffusion model to directly learn the translation process from the CT domain to the PET domain, thereby reducing the stochasticity typically encountered in generative models.
+
+## CT/PET Dataset
+We provide a large-scale CT/PET dataset consisting of 2,028,628 paired PET-CT images. Please refer to the folder `CTPET_DATASET` to view a sample of the dataset.
+
+
+## CPDM 
+This repository contains the official implementation of the proposed CPDM. CPDM employs a Brownian Bridge process-based diffusion model to directly learn the translation from the CT domain to the PET domain, reducing the stochasticity typically encountered in generative models.
 
 ![img](resources/CPDM_architecture.png)
 
