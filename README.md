@@ -1,5 +1,10 @@
 # CT to PET Translation: A Large-scale Dataset and Domain-Knowledge-Guided Diffusion Approach
 
+This is the official implementation of **CPDM**, accepted for presentation at the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) 2025, to be held in Tucson, Arizona, from February 28 to March 4, 2025.
+
+**Authors:** Dac Thai Nguyen, Trung Thanh Nguyen, Huu Tien Nguyen, Thanh Trung Nguyen, Huy Hieu Pham, Thanh Hung Nguyen, Thao Nguyen Truong, and Phi Le Nguyen.
+
+
 ## CT/PET Dataset
 We provide a large-scale CT/PET dataset consisting of 2,028,628 paired PET-CT images. Please refer to the folder `CTPET_DATASET` to view a sample of the dataset.
 
