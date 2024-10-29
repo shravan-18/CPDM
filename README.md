@@ -54,3 +54,14 @@ Specity your shell file based on our templates in <font color=violet><b>configs/
 ```commandline
 sh shell/your_shell.sh
 ```
+
+## Citation
+If you find this code useful for your research, please cite the following paper:
+```
+@inproceedings{nguyen2025CPDM,
+  title = {CT to PET Translation: A Large-scale Dataset and Domain-Knowledge-Guided Diffusion Approach},
+  author = {Nguyen, Dac Thai and Nguyen, Trung Thanh and Nguyen, Huu Tien and Nguyen, Thanh Trung and Pham, Huy Hieu and Nguyen, Thanh Hung and Truong, Thao Nguyen and Nguyen, Phi Le},
+  booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision},
+  year = {2025},
+}
+```
