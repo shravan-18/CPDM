@@ -1,3 +1,4 @@
+![Official Implementation](https://img.shields.io/badge/Official-Implementation-brightgreen)
 # CT to PET Translation: A Large-scale Dataset and Domain-Knowledge-Guided Diffusion Approach
 
 This is the official implementation of **CPDM**, accepted for presentation at the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) 2025, to be held in Tucson, Arizona, from February 28 to March 4, 2025.
