@@ -55,6 +55,9 @@ Specity your shell file based on our templates in <font color=violet><b>configs/
 sh shell/your_shell.sh
 ```
 
+## Acknowledgement
+Our code is implemented based on Brownian Bridge Diffusion Model (https://github.com/xuekt98/BBDM)  
+
 ## Citation
 If you find this code useful for your research, please cite the following paper:
 ```
