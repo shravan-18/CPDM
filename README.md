@@ -56,7 +56,10 @@ sh shell/your_shell.sh
 ```
 
 ## Acknowledgement
-Our code is implemented based on Brownian Bridge Diffusion Model (https://github.com/xuekt98/BBDM)  
+```
+This work was supported by Vingroup Joint Stock Company (Vingroup JSC), Vingroup; in part by the Vingroup Innovation Foundation (VINIF) under Project VINIF.2021.DA00128.
+Our code is implemented based on Brownian Bridge Diffusion Model (https://github.com/xuekt98/BBDM)
+```
 
 ## Citation
 If you find this code useful for your research, please cite the following paper:
