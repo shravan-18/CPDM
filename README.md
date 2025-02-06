@@ -8,6 +8,7 @@ This is the official implementation of **CPDM**, accepted for presentation at th
 
 **Authors:** Dac Thai Nguyen, Trung Thanh Nguyen, Huu Tien Nguyen, Thanh Trung Nguyen, Huy Hieu Pham, Thanh Hung Nguyen, Thao Nguyen Truong, and Phi Le Nguyen.
 
+For questions about the paper and dataset, email to Professor NGUYEN Phi Le <lenp [at] soict.hust.edu.vn>
 
 ## CT/PET Dataset
 We provide a large-scale CT/PET dataset consisting of 2,028,628 paired PET-CT images. Please refer to the folder `CTPET_DATASET` to view a sample of the dataset.
