@@ -4,7 +4,7 @@
 [![ArXiv](https://img.shields.io/badge/arXiv-2410.21932-red)](https://arxiv.org/abs/2410.21932)
 [![YouTube Video](https://img.shields.io/badge/Youtube-Video-red?logo=youtube)](https://www.youtube.com/watch?v=p-88MC4C13c)
 
-This is the official implementation of **CPDM**, accepted for presentation at the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) 2025, to be held in Tucson, Arizona, from February 28 to March 4, 2025.
+This is the official implementation of **CPDM**, published in the Proceedings of the 2025 IEEE/CVF Winter Conference on Applications of Computer Vision (WACV), held in Tucson, Arizona, from February 28 to March 4, 2025.
 
 **Authors:** Dac Thai Nguyen, Trung Thanh Nguyen, Huu Tien Nguyen, Thanh Trung Nguyen, Huy Hieu Pham, Thanh Hung Nguyen, Thao Nguyen Truong, and Phi Le Nguyen.
 
