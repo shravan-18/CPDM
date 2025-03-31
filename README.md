@@ -51,7 +51,7 @@ Note that you can modify this code for training, validation or testing sampling.
 
 ## Train and test CPDM
 
-We have released the CPDM model weights here: https://drive.google.com/file/d/1sjYkPqa_AvK7wHQwncITiQNtEQrJ06Bw/view?usp=sharing
+We have released the CPDM model weights (including CPDM, VQGAN, and UNET weights) here: [https://drive.google.com/file/d/1sjYkPqa_AvK7wHQwncITiQNtEQrJ06Bw/view?usp=sharing](https://drive.google.com/drive/folders/1avklTv-UctndU6HoJyto6-8k2Uh18miH?usp=sharing)
 
 ### Specify your configuration file
 Modify the configuration file based on our templates in <font color=violet><b>configs/Template-CPDM.yaml</b></font>. Don't forget to specify your VQGAN checkpoint path, dataset path and corresponding training and validation/testing sampling path of your Segmentation Model.
