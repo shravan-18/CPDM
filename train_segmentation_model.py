@@ -9,11 +9,11 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from torch.utils.data import DataLoader
 
-CHECKPOINT_PATH = 'path/to/save/checkpoints'
-DATA_PATH = 'path/to/dataset'
+CHECKPOINT_PATH = 'checkpoints'
+DATA_PATH = '/kaggle/input/autopet-png'
 IMAGE_SIZE = 256
-CT_MAX = 2047
-PET_MAX = 32767
+CT_MAX = 1
+PET_MAX = 1
 BATCH_SIZE = 16
 
 class SegmentationModel(pl.LightningModule):
@@ -167,12 +167,12 @@ def main():
     val_dataset = get_dataset_by_stage(DATA_PATH, 'val', (IMAGE_SIZE, IMAGE_SIZE), CT_MAX, PET_MAX, False)
     test_dataset = get_dataset_by_stage(DATA_PATH, 'test', (IMAGE_SIZE, IMAGE_SIZE), CT_MAX, PET_MAX, False)
 
-    train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=16)
-    valid_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=16)
-    test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=16)
+    train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+    valid_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
+    test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
 
     model_name = "Unet"
-    encoder_name = "resnet34"
+    encoder_name = "resnet50"
     model = SegmentationModel(model_name, encoder_name, in_channels=1, out_classes=1)
 
     trainer = pl.Trainer(
@@ -181,11 +181,29 @@ def main():
         max_epochs=100,
         default_root_dir=os.path.join(CHECKPOINT_PATH, model_name),
         callbacks=[
+            # Save best checkpoint based on validation IoU
             ModelCheckpoint(
-                save_weights_only=True, mode="max", monitor="valid_dataset_iou"
-            ),  # Save the best checkpoint based on the minimum loss recorded. Saves only weights and not optimizer
+                save_weights_only=True, 
+                mode="max", 
+                monitor="valid_dataset_iou",
+                filename="best-{epoch:02d}-{valid_dataset_iou:.2f}",
+                save_top_k=1
+            ),
+            # Save checkpoints every 20 epochs
+            ModelCheckpoint(
+                save_weights_only=True,
+                every_n_epochs=20,
+                filename="epoch-{epoch:02d}",
+                save_top_k=-1  # Save all periodic checkpoints
+            ),
+            # Save the final checkpoint
+            ModelCheckpoint(
+                save_weights_only=True,
+                save_last=True,
+                filename="final-epoch-{epoch:02d}"
+            ),
             LearningRateMonitor("epoch"),
-        ],  # Log learning rate every epoch
+        ],
     )
 
     trainer.logger._log_graph = True  # If True, we plot the computation graph in tensorboard
@@ -199,3 +217,4 @@ def main():
     
 if __name__ == '__main__':
     main()
+    

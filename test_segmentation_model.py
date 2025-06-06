@@ -9,11 +9,11 @@ import numpy as np
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-CHECKPOINT_PATH = 'path/to/save/checkpoints'
-DATA_PATH = 'path/to/dataset'
+CHECKPOINT_PATH = 'checkpoints'
+DATA_PATH = '/kaggle/input/autopet-pngt'
 IMAGE_SIZE = 256
-CT_MAX = 2047
-PET_MAX = 32767
+CT_MAX = 1
+PET_MAX = 1
 BATCH_SIZE = 16
 
 class SegmentationModel(pl.LightningModule):
@@ -167,13 +167,13 @@ def main():
     val_dataset = get_dataset_by_stage(DATA_PATH, 'val', (IMAGE_SIZE, IMAGE_SIZE), CT_MAX, PET_MAX, False)
     test_dataset = get_dataset_by_stage(DATA_PATH, 'test', (IMAGE_SIZE, IMAGE_SIZE), CT_MAX, PET_MAX, False)
 
-    train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=16)
-    valid_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=16)
-    test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=16)
+    train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
+    valid_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
+    test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
 
     CHECKPOINT_FILE_PATH = CHECKPOINT_PATH + "/path/to/checkpoint/checkpoint.ckpt"
     model_name = "Unet"
-    encoder_name = "resnet34"
+    encoder_name = "resnet50"
     model = SegmentationModel.load_from_checkpoint(CHECKPOINT_FILE_PATH, arch=model_name, encoder_name=encoder_name, in_channels=1, out_classes=1)
     model.eval()
     
