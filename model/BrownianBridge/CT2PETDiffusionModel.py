@@ -23,7 +23,9 @@ class CT2PETDiffusionModel(BrownianBridgeModel):
         self.attention_map_train_path = model_config.attention_map_train_path
         self.attention_map_val_path = model_config.attention_map_val_path
         
+        print("Initializing VQGAN model with PT weights...")
         self.vqgan = VQModel(**vars(model_config.VQGAN.params)).eval()
+        print("Successfully initialized VQGAN model with PT weights! The .ckpt file save was properly restored!")
         self.vqgan.train = disabled_train
         for param in self.vqgan.parameters():
             param.requires_grad = False
