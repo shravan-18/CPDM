@@ -1,4 +1,4 @@
-from datasets.SegmentedPETCTDataset import SegmentedPETCTDataset
+from datasets.SegmentedPETCTDataset_png import SegmentedPETCTDataset
 import segmentation_models_pytorch as smp
 import argparse
 import omegaconf 

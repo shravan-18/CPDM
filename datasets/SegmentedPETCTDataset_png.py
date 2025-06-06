@@ -40,14 +40,13 @@ class SegmentedPETCTDataset(Dataset):
         ct_image, segmented_map = None, None
         
         try:
-            np_ct_image = np.load(ct_path, allow_pickle=True)
-            np_ct_image = np_ct_image / float(self.ct_max_pixel)
+            # Load and normalize CT image from .png
+            ct_image_pil = Image.open(ct_path)
+            ct_image = transform(ct_image_pil) 
 
-            ct_image = Image.fromarray(np_ct_image) 
-            ct_image = transform(ct_image) 
-
-            np_pet_image = np.load(pet_path, allow_pickle=True)
-            np_pet_image = np_pet_image / float(self.pet_max_pixel)
+            # Load and normalize PET image from .png
+            pet_image_pil = Image.open(pet_path)
+            np_pet_image = np.array(pet_image_pil) / float(self.pet_max_pixel)
                 
             np_segmented_map = self.extract_segmented_map(np_pet_image)
             
@@ -57,6 +56,7 @@ class SegmentedPETCTDataset(Dataset):
             segmented_map = torch.from_numpy(np_segmented_map.copy()).unsqueeze(0)
             
         except BaseException as e:
+            print(f"BaseException: {e}")
             print(ct_path)
             print(pet_path)
         
@@ -74,4 +74,3 @@ class SegmentedPETCTDataset(Dataset):
         thresh[thresh > 0] = 1
         
         return thresh
-      
