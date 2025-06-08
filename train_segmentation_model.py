@@ -30,6 +30,11 @@ class SegmentationModel(pl.LightningModule):
 
         # for image segmentation dice loss could be the best first choice
         self.loss_fn = smp.losses.DiceLoss(smp.losses.BINARY_MODE, from_logits=True)
+        
+        # Initialize lists to store outputs for each epoch
+        self.training_step_outputs = []
+        self.validation_step_outputs = []
+        self.test_step_outputs = []
 
     def forward(self, image):
         # normalize image here
@@ -114,22 +119,31 @@ class SegmentationModel(pl.LightningModule):
         self.log_dict(metrics, prog_bar=True)
 
     def training_step(self, batch, batch_idx):
-        return self.shared_step(batch, "train")            
+        output = self.shared_step(batch, "train")
+        self.training_step_outputs.append(output)
+        return output
 
-    def training_epoch_end(self, outputs):
-        return self.shared_epoch_end(outputs, "train")
+    def on_train_epoch_end(self):
+        self.shared_epoch_end(self.training_step_outputs, "train")
+        self.training_step_outputs.clear()  # Clear the list for next epoch
 
     def validation_step(self, batch, batch_idx):
-        return self.shared_step(batch, "valid")
+        output = self.shared_step(batch, "valid")
+        self.validation_step_outputs.append(output)
+        return output
 
-    def validation_epoch_end(self, outputs):
-        return self.shared_epoch_end(outputs, "valid")
+    def on_validation_epoch_end(self):
+        self.shared_epoch_end(self.validation_step_outputs, "valid")
+        self.validation_step_outputs.clear()  # Clear the list for next epoch
 
     def test_step(self, batch, batch_idx):
-        return self.shared_step(batch, "test")  
+        output = self.shared_step(batch, "test")
+        self.test_step_outputs.append(output)
+        return output
 
-    def test_epoch_end(self, outputs):
-        return self.shared_epoch_end(outputs, "test")
+    def on_test_epoch_end(self):
+        self.shared_epoch_end(self.test_step_outputs, "test")
+        self.test_step_outputs.clear()  # Clear the list for next epoch
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.0001)
