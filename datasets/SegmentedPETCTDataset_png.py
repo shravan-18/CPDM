@@ -62,7 +62,7 @@ class SegmentedPETCTDataset(Dataset):
         
         image_name = Path(ct_path).stem
         
-        return ct_image, segmented_map, image_name
+        return ct_image.float(), segmented_map, image_name
     
     def extract_segmented_map(self, np_img):
         STATIC_THRESH_HOLD = 100
