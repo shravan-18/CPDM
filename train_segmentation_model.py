@@ -187,7 +187,63 @@ def main():
 
     model_name = "Unet"
     encoder_name = "resnet50"
-    model = SegmentationModel(model_name, encoder_name, in_channels=1, out_classes=1)
+    
+    # Check for existing checkpoints
+    checkpoint_dir = os.path.join(CHECKPOINT_PATH, model_name)
+    checkpoint_path = None
+    start_epoch = 0
+    
+    if os.path.exists(checkpoint_dir):
+        # Look for the last checkpoint
+        last_checkpoint = os.path.join(checkpoint_dir, "last.ckpt")
+        if os.path.exists(last_checkpoint):
+            checkpoint_path = last_checkpoint
+            print(f"Found last checkpoint: {last_checkpoint}")
+        else:
+            # If no last.ckpt, look for checkpoints in the format final-epoch-{epoch:02d}.ckpt
+            final_checkpoints = [f for f in os.listdir(checkpoint_dir) if f.startswith("final-epoch-") and f.endswith(".ckpt")]
+            if final_checkpoints:
+                final_checkpoints.sort(key=lambda x: int(x.split("-")[-1].split(".")[0]))
+                latest_final = os.path.join(checkpoint_dir, final_checkpoints[-1])
+                checkpoint_path = latest_final
+                # Extract epoch number from filename
+                start_epoch = int(final_checkpoints[-1].split("-")[-1].split(".")[0])
+                print(f"Found final checkpoint: {latest_final} (Epoch: {start_epoch})")
+            else:
+                # Look for periodic checkpoints in the format epoch-{epoch:02d}.ckpt
+                periodic_checkpoints = [f for f in os.listdir(checkpoint_dir) if f.startswith("epoch-") and f.endswith(".ckpt")]
+                if periodic_checkpoints:
+                    periodic_checkpoints.sort(key=lambda x: int(x.split("-")[-1].split(".")[0]))
+                    latest_periodic = os.path.join(checkpoint_dir, periodic_checkpoints[-1])
+                    checkpoint_path = latest_periodic
+                    # Extract epoch number from filename
+                    start_epoch = int(periodic_checkpoints[-1].split("-")[-1].split(".")[0])
+                    print(f"Found periodic checkpoint: {latest_periodic} (Epoch: {start_epoch})")
+                else:
+                    # Look for best checkpoints in the format best-{epoch:02d}-{valid_dataset_iou:.2f}.ckpt
+                    best_checkpoints = [f for f in os.listdir(checkpoint_dir) if f.startswith("best-") and f.endswith(".ckpt")]
+                    if best_checkpoints:
+                        # Sort by epoch number
+                        best_checkpoints.sort(key=lambda x: int(x.split("-")[1]))
+                        latest_best = os.path.join(checkpoint_dir, best_checkpoints[-1])
+                        checkpoint_path = latest_best
+                        # Extract epoch number from filename
+                        start_epoch = int(best_checkpoints[-1].split("-")[1])
+                        print(f"Found best checkpoint: {latest_best} (Epoch: {start_epoch})")
+    
+    # Initialize model - either fresh or from checkpoint
+    if checkpoint_path:
+        print(f"Resuming training from checkpoint at epoch {start_epoch}")
+        model = SegmentationModel.load_from_checkpoint(
+            checkpoint_path, 
+            arch=model_name, 
+            encoder_name=encoder_name, 
+            in_channels=1, 
+            out_classes=1
+        )
+    else:
+        print("Starting training from scratch")
+        model = SegmentationModel(model_name, encoder_name, in_channels=1, out_classes=1)
 
     trainer = pl.Trainer(
         accelerator="gpu", 
