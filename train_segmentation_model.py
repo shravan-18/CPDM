@@ -189,92 +189,131 @@ def main():
     encoder_name = "resnet50"
     
     # Check for existing checkpoints
-    checkpoint_dir = os.path.join(CHECKPOINT_PATH, model_name)
+    checkpoint_dir = '/kaggle/working/CPDM/checkpoints/Unet/lightning_logs/version_0/checkpoints'
     checkpoint_path = None
     start_epoch = 0
-    
+
     if os.path.exists(checkpoint_dir):
         # Look for the last checkpoint
         last_checkpoint = os.path.join(checkpoint_dir, "last.ckpt")
         if os.path.exists(last_checkpoint):
             checkpoint_path = last_checkpoint
             print(f"Found last checkpoint: {last_checkpoint}")
+            # For last.ckpt, we need to load it to get the epoch
+            try:
+                # Load just the checkpoint metadata to extract epoch
+                ckpt = torch.load(last_checkpoint, map_location='cpu')
+                start_epoch = ckpt.get('epoch', 0)
+                print(f"Last checkpoint is from epoch {start_epoch}")
+            except Exception as e:
+                print(f"Warning: Could not extract epoch from checkpoint: {e}")
+                # If we can't extract the epoch, assume it's the latest
+                start_epoch = 57  # Based on your final-epoch filename
         else:
-            # If no last.ckpt, look for checkpoints in the format final-epoch-{epoch:02d}.ckpt
+            # If no last.ckpt, look for checkpoints in the format final-epoch-epoch=XX.ckpt
             final_checkpoints = [f for f in os.listdir(checkpoint_dir) if f.startswith("final-epoch-") and f.endswith(".ckpt")]
             if final_checkpoints:
-                final_checkpoints.sort(key=lambda x: int(x.split("-")[-1].split(".")[0]))
                 latest_final = os.path.join(checkpoint_dir, final_checkpoints[-1])
                 checkpoint_path = latest_final
-                # Extract epoch number from filename
-                start_epoch = int(final_checkpoints[-1].split("-")[-1].split(".")[0])
+                # Extract epoch number from filename using regex to find the number after "epoch="
+                import re
+                epoch_match = re.search(r'epoch=(\d+)', final_checkpoints[-1])
+                if epoch_match:
+                    start_epoch = int(epoch_match.group(1))
                 print(f"Found final checkpoint: {latest_final} (Epoch: {start_epoch})")
             else:
-                # Look for periodic checkpoints in the format epoch-{epoch:02d}.ckpt
+                # Look for periodic checkpoints in the format epoch-epoch=XX.ckpt
                 periodic_checkpoints = [f for f in os.listdir(checkpoint_dir) if f.startswith("epoch-") and f.endswith(".ckpt")]
                 if periodic_checkpoints:
-                    periodic_checkpoints.sort(key=lambda x: int(x.split("-")[-1].split(".")[0]))
+                    # Sort by epoch number
+                    periodic_checkpoints.sort(key=lambda x: int(re.search(r'epoch=(\d+)', x).group(1)))
                     latest_periodic = os.path.join(checkpoint_dir, periodic_checkpoints[-1])
                     checkpoint_path = latest_periodic
                     # Extract epoch number from filename
-                    start_epoch = int(periodic_checkpoints[-1].split("-")[-1].split(".")[0])
+                    epoch_match = re.search(r'epoch=(\d+)', periodic_checkpoints[-1])
+                    if epoch_match:
+                        start_epoch = int(epoch_match.group(1))
                     print(f"Found periodic checkpoint: {latest_periodic} (Epoch: {start_epoch})")
                 else:
-                    # Look for best checkpoints in the format best-{epoch:02d}-{valid_dataset_iou:.2f}.ckpt
+                    # Look for best checkpoints in the format best-epoch=XX-valid_dataset_iou=X.XX.ckpt
                     best_checkpoints = [f for f in os.listdir(checkpoint_dir) if f.startswith("best-") and f.endswith(".ckpt")]
                     if best_checkpoints:
                         # Sort by epoch number
-                        best_checkpoints.sort(key=lambda x: int(x.split("-")[1]))
+                        best_checkpoints.sort(key=lambda x: int(re.search(r'epoch=(\d+)', x).group(1)))
                         latest_best = os.path.join(checkpoint_dir, best_checkpoints[-1])
                         checkpoint_path = latest_best
                         # Extract epoch number from filename
-                        start_epoch = int(best_checkpoints[-1].split("-")[1])
+                        epoch_match = re.search(r'epoch=(\d+)', best_checkpoints[-1])
+                        if epoch_match:
+                            start_epoch = int(epoch_match.group(1))
                         print(f"Found best checkpoint: {latest_best} (Epoch: {start_epoch})")
     
     # Initialize model - either fresh or from checkpoint
     if checkpoint_path:
         print(f"Resuming training from checkpoint at epoch {start_epoch}")
-        model = SegmentationModel.load_from_checkpoint(
-            checkpoint_path, 
-            arch=model_name, 
-            encoder_name=encoder_name, 
-            in_channels=1, 
-            out_classes=1
+        model = SegmentationModel(model_name, encoder_name, in_channels=1, out_classes=1)
+        
+        trainer = pl.Trainer(
+            accelerator="gpu", 
+            devices=1,
+            max_epochs=100,
+            default_root_dir=os.path.join(CHECKPOINT_PATH, model_name),
+            resume_from_checkpoint=checkpoint_path,  # This tells PyTorch Lightning to resume training
+            callbacks=[
+                # Same callbacks as before
+                ModelCheckpoint(
+                    save_weights_only=True, 
+                    mode="max", 
+                    monitor="valid_dataset_iou",
+                    filename="best-{epoch:02d}-{valid_dataset_iou:.2f}",
+                    save_top_k=1
+                ),
+                ModelCheckpoint(
+                    save_weights_only=True,
+                    every_n_epochs=20,
+                    filename="epoch-{epoch:02d}",
+                    save_top_k=-1
+                ),
+                ModelCheckpoint(
+                    save_weights_only=True,
+                    save_last=True,
+                    filename="final-epoch-{epoch:02d}"
+                ),
+                LearningRateMonitor("epoch"),
+            ],
         )
     else:
         print("Starting training from scratch")
         model = SegmentationModel(model_name, encoder_name, in_channels=1, out_classes=1)
-
-    trainer = pl.Trainer(
-        accelerator="gpu", 
-        devices=1,
-        max_epochs=100,
-        default_root_dir=os.path.join(CHECKPOINT_PATH, model_name),
-        callbacks=[
-            # Save best checkpoint based on validation IoU
-            ModelCheckpoint(
-                save_weights_only=True, 
-                mode="max", 
-                monitor="valid_dataset_iou",
-                filename="best-{epoch:02d}-{valid_dataset_iou:.2f}",
-                save_top_k=1
-            ),
-            # Save checkpoints every 20 epochs
-            ModelCheckpoint(
-                save_weights_only=True,
-                every_n_epochs=20,
-                filename="epoch-{epoch:02d}",
-                save_top_k=-1  # Save all periodic checkpoints
-            ),
-            # Save the final checkpoint
-            ModelCheckpoint(
-                save_weights_only=True,
-                save_last=True,
-                filename="final-epoch-{epoch:02d}"
-            ),
-            LearningRateMonitor("epoch"),
-        ],
-    )
+        
+        trainer = pl.Trainer(
+            accelerator="gpu", 
+            devices=1,
+            max_epochs=100,
+            default_root_dir=os.path.join(CHECKPOINT_PATH, model_name),
+            callbacks=[
+                # Same callbacks as before
+                ModelCheckpoint(
+                    save_weights_only=True, 
+                    mode="max", 
+                    monitor="valid_dataset_iou",
+                    filename="best-{epoch:02d}-{valid_dataset_iou:.2f}",
+                    save_top_k=1
+                ),
+                ModelCheckpoint(
+                    save_weights_only=True,
+                    every_n_epochs=20,
+                    filename="epoch-{epoch:02d}",
+                    save_top_k=-1
+                ),
+                ModelCheckpoint(
+                    save_weights_only=True,
+                    save_last=True,
+                    filename="final-epoch-{epoch:02d}"
+                ),
+                LearningRateMonitor("epoch"),
+            ],
+        )
 
     trainer.logger._log_graph = True  # If True, we plot the computation graph in tensorboard
     trainer.logger._default_hp_metric = None  # Optional logging argument that we don't need
